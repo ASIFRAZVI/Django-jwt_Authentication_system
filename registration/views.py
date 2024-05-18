@@ -35,7 +35,6 @@ class login_user_APIView(APIView):
         if login_serializer.is_valid():
             username = login_serializer.validated_data.get('username')
             password = login_serializer.validated_data.get('password')
-            # print(username, password)
 
             try:
                 user = Register_user.objects.get(username=username)
@@ -44,11 +43,17 @@ class login_user_APIView(APIView):
 
             if check_password(password, user.password):
                 refresh = RefreshToken.for_user(user)
-                return Response({
+                response= Response({
                     'refresh': str(refresh),
                     'access': str(refresh.access_token),
                     'message': 'Login successful, redirecting to dashboard'
                 }, status=status.HTTP_200_OK)
+            
+                # # Set token in cookies
+                # response.set_cookie('refresh_token', str(refresh), httponly=True)
+                # response.set_cookie('access_token', str(refresh.access_token), httponly=True)
+                
+                return Response({"message":"stored in cookies"},status=status.HTTP_200_OK)            
             else:
                 return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)
         else:

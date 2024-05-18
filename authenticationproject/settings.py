@@ -1,4 +1,5 @@
 from pathlib import Path,os
+from datetime import timedelta
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -56,19 +57,31 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'authenticationproject.wsgi.application'
 
-
-
-DATABASES = {
-    'default': {
-        'ENGINE': os.getenv('DB_Engine'),
-        'NAME': os.getenv("Dev_DB"),
-        'USER':os.getenv("DB_username"),
-        'PASSWORD':os.getenv("DB_password"),
-        'HOST':os.getenv("DB_host"),
-        'PORT':os.getenv("DB_port"),
+DJANGO_ENV= os.getenv('DJANGO_ENV')
+if DJANGO_ENV == 'development':
+    DATABASES = {
+        'default': {
+            'ENGINE': os.getenv('DB_Engine'),
+            'NAME': os.getenv("Dev_DB"),
+            'USER':os.getenv("DB_username"),
+            'PASSWORD':os.getenv("DB_password"),
+            'HOST':os.getenv("DB_host"),
+            'PORT':os.getenv("DB_port"),
+        }
     }
-}
-
+else:
+        DATABASES = {
+        'default': {
+            'ENGINE': os.getenv('DB_Engine'),
+            'NAME': os.getenv("Dev_DB"),
+            'USER':os.getenv("DB_username"),
+            'PASSWORD':os.getenv("DB_password"),
+            'HOST':os.getenv("DB_host"),
+            'PORT':os.getenv("DB_port"),
+        }
+    }
+        
+        
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -78,6 +91,13 @@ REST_FRAMEWORK = {
         'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
 }
 
 
